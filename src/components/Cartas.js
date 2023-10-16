@@ -14,20 +14,17 @@ function Cartas() {
         'id':'',
         'nombre':'',
         'direccion':'',
-        'telefono':'',
+        'telefono':''
 
     }
 
     const btnActual = useRef(null);
 
-    const [datos, setDatos] = useState(initialState);
+    const [datos, setDatos] = useState(initialState)
     //deconstruccion de datos u objetos
-    const { nombre, direccion, telefono } = datos;
-    const [informacion, setInformacion] = useState([]);
-
-    useEffect(() =>{
-        btnActual.current.disabled = true;
-    }, [])
+    const { nombre, direccion, telefono, id } = datos
+    const [informacion, setInformacion] = useState([])
+    const[isActive, setIsActive] = useState(false)
 
     const handleSubmit = (event) =>{
         event.preventDefault();
@@ -41,6 +38,7 @@ function Cartas() {
         inf.push(initialState2);
         setInformacion(inf);
         setDatos(initialState);
+        console.log(informacion);
     }
 
     const handleChange = (e) => {
@@ -48,23 +46,49 @@ function Cartas() {
             ...datos, [e.target.name]:e.target.value
         });
     }
-    const handleEliminar = (e) =>{
-        let nombre = e.target.name;
-        nombre = nombre.slice(1);
-        let inf = [];
-        for(let i=0; i<informacion.length;i++) {
-            if(informacion[i].id !== nombre) {
-              inf.push(informacion[i]);  
-            }
+    const handleEliminar = e =>{
+        const id = e.target.name.slice(1)
+        let inf = []
+        for(const info of informacion){
+            if(info.id !== id) inf.push(info)
         }
-        setInformacion(inf);
+        setInformacion(inf)
     }
-    const handleModificar = m => {
-        btnActual.current.disabled = false;
+    /**
+     * When the user clicks on the button, the function will get the id of the button, set the modal to
+     * active, and then loop through the array of objects to find the object with the same id as the
+     * button and set the modal's state to that object.
+     */
+    const handleModificar = e => {
+        const id = e.target.name.slice(1)
+        setIsActive(true)
+
+        for(const info of informacion){
+            if(info.id === id) setDatos(info) 
+        }
     }
+
+    const handleActualizar = e =>{
+        const id = datos.id
+        let inf = informacion
+        const index = inf.findIndex(i => i.id == id)
+        const modifiedState = {
+            'id': datos.id,
+            'nombre': datos.nombre,
+            'direccion': datos.direccion,
+            'telefono': datos.telefono
+        }
+        inf[index] = modifiedState
+        setInformacion(inf)
+        setDatos(initialState)
+
+        setIsActive(false)
+
+    }
+
     return (  
     <Container>
-        <Row classname="row-cols-3">
+        <Row className="row-cols-3">
             {
                 informacion.map(inf => (
                     <Col key={inf.id}>
@@ -117,10 +141,10 @@ function Cartas() {
                             value = {telefono} onChange = {handleChange}
                         />
                 </Form.Group>
-                <Button variant="primary" type="submit">
+                <Button variant="primary" type="submit" name="btnAgregar">
                     Agregar
                 </Button>
-                <Button variant="success" name="btnActualizar" ref={btnActual}>
+                <Button variant="info" name={id} className={isActive ? 'ml-3' : 'display-none'} onClick={handleActualizar}>
                     Actualizar
                 </Button>
             </Form>
