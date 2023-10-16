@@ -6,14 +6,12 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Contador from './components/Contador';
 import BarraSuperior from './components/BarraSuperior';
 import Cartas from './components/Cartas';
-import Form from './components/Cartas';
 
 
 function App() {
   return (
     <div className="App">
     <BarraSuperior />
-    {/* <Contador /> */}
     <Cartas />
     </div>
   );
